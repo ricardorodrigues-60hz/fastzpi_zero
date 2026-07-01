@@ -12,10 +12,10 @@ def test_root_deve_retornar_ola_mundo():
     - A: Act - Executa a coisa (o SUT)
     - A: Assert - Garanta que o A é A
     """
-    # arrange
+    # Arrange
     client = TestClient(app)
-    # act
+    # Act
     response = client.get('/')
-    # assert
+    # Assert
     assert response.json() == {'message': 'Olá Mundo!'}
     assert response.status_code == HTTPStatus.OK
