@@ -1,4 +1,14 @@
 {
     "python-envs.defaultEnvManager": "ms-python.python:poetry",
-    "python-envs.defaultPackageManager": "ms-python.python:poetry"
+    "python-envs.defaultPackageManager": "ms-python.python:poetry",
+    "workbench.activityBar.compact": true,
+    "workbench.activityBar.autoHide": false,
+    "workbench.iconTheme": "catppuccin-mocha",
+    "workbench.activityBar.iconClickBehavior": "toggle",
+    "workbench.sideBar.location": "left",
+    "workbench.statusBar.visible": true,
+    "workbench.tree.enableStickyScroll": false,
+    "workbench.preferredLightColorTheme": "Dark Modern",
+    "workbench.editor.decorations.colors": true,
+    "zenMode.centerLayout": true
 }
