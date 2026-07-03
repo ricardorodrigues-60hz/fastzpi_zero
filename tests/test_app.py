@@ -22,9 +22,6 @@ def test_root_deve_retornar_ola_mundo():
     assert response.status_code == HTTPStatus.OK
 
 
-
-
-
 def test_read_html_deve_retornar_ola_mundo():
 
     client = TestClient(app)
@@ -38,3 +35,24 @@ def test_read_html_deve_retornar_ola_mundo():
     assert '<html>' in response.text
     assert '</html>' in response.text
     assert '<h1> Olá Mundo </h1>' in response.text
+
+
+def test_create_user():
+
+    client = TestClient(app)
+
+    response = client.post(
+        '/users/',
+        json={
+            'username': 'alice',
+            'email': 'alice@example',
+            'password': 'secret',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CREATED
+    assert response.json() == {
+        'username': 'alice',
+        'email': 'alice@examle',
+        'id': 1,
+    }
