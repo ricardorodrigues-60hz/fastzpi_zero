@@ -35,8 +35,6 @@ def test_read_html_deve_retornar_ola_mundo():
 
     assert 'text/html' in response.headers['content-type']
 
-    corpo_texto = response.text
-
-    assert '<html>' in corpo_texto
-    assert '</html>' in corpo_texto
-    assert '<h1> Olá Mundo </h1>' in corpo_texto
+    assert '<html>' in response.text
+    assert '</html>' in response.text
+    assert '<h1> Olá Mundo </h1>' in response.text
