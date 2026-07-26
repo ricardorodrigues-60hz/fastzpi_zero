@@ -92,4 +92,16 @@ def test_teste_se_usuario_existe(client):
         },
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {'detail': 'Deu Ruim" Não Achei...'}
+    assert response.json() == {'detail': 'Deu Ruim! Não Achei...'}
+
+
+def test_delete_user(client):
+    response = client.delete(
+        '/users/1',
+    )
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'id': 1,
+        'username': 'bob',
+        'email': 'bob@example.com',
+    }

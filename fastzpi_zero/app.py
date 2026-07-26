@@ -67,7 +67,7 @@ def update_user(user_id: int, user: UserSchema):
 
     if user_id < 1 or user_id > len(database):
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Deu Ruim" Não Achei...'
+            status_code=HTTPStatus.NOT_FOUND, detail='Deu Ruim! Não Achei...'
         )
 
     user_with_id = UserDB(**user.model_dump(), id=user_id)
@@ -77,13 +77,12 @@ def update_user(user_id: int, user: UserSchema):
 
 
 @app.delete(
-    '/users/{user_id}',
-    status_code=HTTPException.OK,
-    response_model=UserPublic
+    '/users/{user_id}', status_code=HTTPStatus.OK, response_model=UserPublic
 )
 def delete_user(user_id: int):
     if user_id < 1 or user_id > len(database):
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Deu Ruim" Não Achei...'
+            status_code=HTTPStatus.NOT_FOUND, detail='Deu Ruim! Não Achei...'
         )
-    return database.pop[user_id - 1]
+
+    return database.pop(user_id - 1)
