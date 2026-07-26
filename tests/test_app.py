@@ -95,13 +95,35 @@ def test_teste_se_usuario_existe(client):
     assert response.json() == {'detail': 'Deu Ruim! Não Achei...'}
 
 
+def test_get_user_id___exercicio(client):
+    response = client.get('/users/1')
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'username': 'bob',
+        'email': 'bob@example.com',
+        'id': 1,
+    }
+
+
+def test_se_usuario_get_id_nao_existe___exercicio(client):
+    response = client.get(
+        '/users/3',
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Deu Ruim! Não Achei...'}
+
+
 def test_delete_user(client):
     response = client.delete(
         '/users/1',
     )
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {
-        'id': 1,
-        'username': 'bob',
-        'email': 'bob@example.com',
-    }
+    assert response.json() == {'message': 'User deleted'}
+
+
+def test_se_usuario_deletado_existe___exercicio(client):
+    response = client.delete(
+        '/users/3',
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Deu Ruim! Não Achei...'}

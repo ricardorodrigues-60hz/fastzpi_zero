@@ -10,5 +10,6 @@
     "workbench.tree.enableStickyScroll": false,
     "workbench.preferredLightColorTheme": "Dark Modern",
     "workbench.editor.decorations.colors": true,
-    "zenMode.centerLayout": true
+    "zenMode.centerLayout": true,
+    "python.REPL.enableREPLSmartSend": false
 }
