@@ -12,6 +12,7 @@ def client():
     return TestClient(app)
 
 
+@pytest.fixture
 def session():
     engine = create_engine('sqlite:///:memory:')
 
@@ -19,3 +20,5 @@ def session():
 
     with Session(engine) as session:
         yield session
+
+    table_registry.metadata.drop_all(engine)
