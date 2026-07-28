@@ -100,4 +100,3 @@ def read_user(user_id: int):
         )
 
     return database[user_id - 1]
- 
