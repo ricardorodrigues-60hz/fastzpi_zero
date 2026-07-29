@@ -13,8 +13,6 @@ from fastzpi_zero.schemas import (
 
 app = FastAPI(title='Minha API BALA')
 
-database = []
-
 
 @app.get(
     '/', status_code=HTTPStatus.OK, response_model=Message
