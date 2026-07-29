@@ -22,3 +22,6 @@ class User:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
+    update_at: Mapped[datetime] = mapped_column(  # ___exericicio
+        init=False, onupdate=func.now()
+    )

@@ -10,6 +10,9 @@ from fastzpi_zero.schemas import (
     UserPublic,
     UserSchema,
 )
+from fastzpi_zero.settings import Settings
+
+database = Settings().DATABASE_URL
 
 app = FastAPI(title='Minha API BALA')
 
