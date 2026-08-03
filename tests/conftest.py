@@ -9,7 +9,7 @@ from sqlalchemy.pool import StaticPool
 
 from fastzpi_zero.app import app
 from fastzpi_zero.database import get_session
-from fastzpi_zero.models import table_registry
+from fastzpi_zero.models import User, table_registry
 
 
 @pytest.fixture
@@ -61,3 +61,13 @@ def _mock_db_time(*, model, time=datetime(2025, 5, 20)):
 @pytest.fixture
 def mock_db_time():
     return _mock_db_time
+
+
+@pytest.fixture
+def user(session):
+    user = User(username='Teste', email='teste@teste.com', password='testest')
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    return user
