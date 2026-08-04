@@ -83,7 +83,7 @@ def test_read_users_with_users(client, user):
     assert response.json() == {'users': [user_schema]}
 
 
-def test_update_user(client):
+def test_update_user(client, user):
     response = client.put(
         '/users/1',
         json={
@@ -110,16 +110,17 @@ def test_teste_se_usuario_existe(client):
         },
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {'detail': 'Deu Ruim! Não Achei...'}
+    assert response.json() == {'detail': 'User not found'}
 
 
-def test_get_user_id___exercicio(client):
-    response = client.get('/users/1')
+def test_get_user_id___exercicio(client, user):
+    response = client.get(f'/users/{user.id}')
+
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'username': 'bob',
-        'email': 'bob@example.com',
-        'id': 1,
+        'username': user.username,
+        'email': user.email,
+        'id': user.id,
     }
 
 
@@ -128,10 +129,10 @@ def test_se_usuario_get_id_nao_existe___exercicio(client):
         '/users/3',
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {'detail': 'Deu Ruim! Não Achei...'}
+    assert response.json() == {'detail': 'User not found'}
 
 
-def test_delete_user(client):
+def test_delete_user(client, user):
     response = client.delete(
         '/users/1',
     )
@@ -141,7 +142,61 @@ def test_delete_user(client):
 
 def test_se_usuario_deletado_existe___exercicio(client):
     response = client.delete(
-        '/users/3',
+        '/users/666',
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {'detail': 'Deu Ruim! Não Achei...'}
+    assert response.json() == {'detail': 'User not found'}
+
+
+def test_update_integrity_error(client, user):
+
+    client.post(
+        '/users/',
+        json={
+            'username': 'fausto',
+            'email': 'fausto@example.com',
+            'password': 'secret',
+        },
+    )
+
+    response = client.put(
+        f'/users/{user.id}',
+        json={
+            'username': 'fausto',
+            'email': 'bob@example.com',
+            'password': 'mynewpassword',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Username or Email already exists'}
+
+
+def test_create_user_deve_return_409_exists__exercicio(client, user):
+
+    response = client.post(
+        '/users/',
+        json={
+            'username': user.username,
+            'email': 'teste@example.com',
+            'password': 'testest',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Username already exists'}
+
+
+def test_create_user_deve_return_email_exists__exercicio(client, user):
+
+    response = client.post(
+        '/users/',
+        json={
+            'username': 'alice',
+            'email': user.email,
+            'password': 'testest',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Email already exists'}

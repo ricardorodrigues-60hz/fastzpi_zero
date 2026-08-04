@@ -3,20 +3,17 @@ from http import HTTPStatus
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from fastzpi_zero.database import get_session
 from fastzpi_zero.models import User
 from fastzpi_zero.schemas import (
     Message,
-    UserDB,
     UserList,
     UserPublic,
     UserSchema,
 )
-from fastzpi_zero.settings import Settings
-
-database = Settings().DATABASE_URL
 
 app = FastAPI(title='Minha API BALA')
 
@@ -146,52 +143,57 @@ def update_user(
     user_id: int, user: UserSchema, session: Session = Depends(get_session)
 ):
 
-    user_db = session.scalar(
-        select(User).where(User.id == user_id)
-    )
+    user_db = session.scalar(select(User).where(User.id == user_id))
 
     if not user_db:
         raise HTTPException(
-            detail='User not found',
-            status_code=HTTPStatus.NOT_FOUND
+            detail='User not found', status_code=HTTPStatus.NOT_FOUND
+        )
+    try:
+        user_db.username = user.username
+        user_db.email = user.email
+        user_db.password = user.password
+        session.commit()
+        session.refresh(user_db)
+
+        return user_db
+    except IntegrityError:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='Username or Email already exists',
         )
 
-    user_db.username = user.username
-    user_db.email = user.email
-    user_db.pasword = user.password
-
-    session.add(user_db)
-    session.commit()
-    session.refresh(user_db)
-
-    return user
 
 @app.delete(
     '/users/{user_id}',
     status_code=HTTPStatus.OK,  # , response_model=Message
 )
-def delete_user(
-    user_id: int, session: Session = Depends(get_session)
-):
-   
-    user_db = session.scalar(
-        select(User).where(User.id == user_id)
-    )
-   
+def delete_user(user_id: int, session: Session = Depends(get_session)):
+
+    user_db = session.scalar(select(User).where(User.id == user_id))
+
     if not user_db:
-       raise HTTPException(
-           detail='User not found',
-           status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(
+            detail='User not found',
+            status_code=HTTPStatus.NOT_FOUND,
         )
-   ...
+
+    session.delete(user_db)
+    session.commit()
+
+    return {'message': 'User deleted'}
+
 
 @app.get(
     '/users/{user_id}', status_code=HTTPStatus.OK, response_model=UserPublic
 )
-def read_user(user_id: int):
-    if user_id < 1 or user_id > len(database):
+def read_user(user_id: int, session: Session = Depends(get_session)):
+
+    user_db = session.scalar(select(User).where(User.id == user_id))
+
+    if not user_db:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Deu Ruim! Não Achei...'
+            status_code=HTTPStatus.NOT_FOUND, detail='User not found'
         )
 
-    return database[user_id - 1]
+    return user_db
